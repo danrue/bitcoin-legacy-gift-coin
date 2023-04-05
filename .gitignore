@@ -1,0 +1,6 @@
+bottom_coins/
+coin_data/
+*.swp
+*.gcode
+*.scad
+*.stl
