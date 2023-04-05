@@ -47,7 +47,8 @@ sudo apt install python3 openscad python-is-python3 python3-pip pipenv libgmp-de
 sudo snap install prusa-slicer
 ```
 
-Once the above prerequisites are installed, run the following To get started with development, install the above tools and then run the following:
+Once the above prerequisites are installed, run the following to verify
+everything is working:
 
 ```
 pipenv install
