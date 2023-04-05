@@ -28,7 +28,10 @@ class BottomCoin:
             return coin_lib.BitcoinWallet(seed_phrase=self.seed_phrase.lower())
 
     def create_coin(self):
-        coin = coin_lib.common_coin(bottom=True)
+        # Retrieve basic coin shape
+        base_coin = coin_lib.BaseCoin()
+        coin = base_coin.common_coin(bottom=True)
+        self.coin_thickness = base_coin.coin_thickness
         coin = self.add_denomination_text(coin)
         coin = self.add_serial_number_text(coin)
         coin = self.add_bitcoin_sign(coin)
@@ -44,7 +47,7 @@ class BottomCoin:
                 valign="center",
                 font="Liberation Sans:style=Bold Italic",
             )
-            .linear_extrude(coin_lib.coin_thickness - 3)
+            .linear_extrude(self.coin_thickness - 3)
             .translate([0, 8, 3])
         )
         coin += (
@@ -55,7 +58,7 @@ class BottomCoin:
                 valign="center",
                 font="Liberation Sans:style=Bold Italic",
             )
-            .linear_extrude(coin_lib.coin_thickness - 3)
+            .linear_extrude(self.coin_thickness - 3)
             .translate([0, -8, 3])
         )
         return coin

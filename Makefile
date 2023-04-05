@@ -1,9 +1,12 @@
-all: black top_coin.scad top_coin.stl bottom_coin.scad bottom_coin.stl
+all: black test top_coin.scad top_coin.stl bottom_coin.scad bottom_coin.stl
 
 quick_build: black top_coin.scad bottom_coin.scad
 
 black:
-	pipenv run black *.py
+	pipenv run black *.py tests/unit/*.py
+
+test:
+	pipenv run python -m pytest
 
 top_coin.scad: top_coin.py coin_lib.py
 	pipenv run python top_coin.py
@@ -19,3 +22,6 @@ bottom_coin.stl: bottom_coin.scad
 	openscad -o bottom_coins/bottom_coin_sn0000.stl bottom_coins/bottom_coin_sn0000.scad
 	prusa-slicer --slice bottom_coins/bottom_coin_sn0000.stl --output bottom_coins/bottom_coin_sn0000.gcode --load 15mm_prusa_petg_config.ini
 	prusa-slicer --duplicate 2 --slice bottom_coins/bottom_coin_sn0000.stl --output bottom_coins/2xbottom_coin_sn0000.gcode --load 15mm_prusa_petg_config.ini
+
+clean:
+	rm -f *.gcode *.stl *.scad bottom_coins/* coin_data/*

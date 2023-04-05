@@ -3,12 +3,12 @@ from solid2 import *
 from datetime import datetime
 import coin_lib
 
-coin_diameter = coin_lib.coin_diameter
-coin_thickness = coin_lib.coin_thickness
-fn = coin_lib.fn
-
 # Retrieve basic coin shape
-coin = coin_lib.common_coin()
+base_coin = coin_lib.BaseCoin()
+coin = base_coin.common_coin()
+coin_diameter = base_coin.coin_diameter
+coin_thickness = base_coin.coin_thickness
+fn = base_coin.fn
 
 # Write out "bitcoin" on the back side in negative space
 coin -= (

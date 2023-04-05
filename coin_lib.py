@@ -1,59 +1,67 @@
-from solid2 import *
+import solid2
 import math
 import secrets
 from bitcoinlib.keys import HDKey
 from bitcoinlib.mnemonic import Mnemonic
 
 
-coin_diameter = 76.2  # mm; (3 inches)
-coin_thickness = 5.0  # mm
-screw_hole_diameter = 2.5  # mm
-nut_width = 4.0  # mm
+class BaseCoin:
+    def __init__(
+        self,
+        coin_diameter=76.2,
+        coin_thickness=5.0,
+        screw_hole_diameter=2.5,
+        nut_width=4.0,
+        fn=512,
+    ):
+        self.coin_diameter = coin_diameter
+        self.coin_thickness = coin_thickness
+        self.screw_hole_diameter = screw_hole_diameter
+        self.nut_width = nut_width
+        self.fn = fn
 
-fn = 512  # number of facets / resolution
+    def hole_locations(self):
+        radius = (self.coin_diameter / 2) - 5
+        angles = [45, 135, 225, 315]
 
-
-def hole_locations():
-    radius = (coin_diameter / 2) - 5
-    angles = [45, 135, 225, 315]
-
-    return [
-        [
-            radius * math.cos(math.radians(angle)),
-            radius * math.sin(math.radians(angle)),
-            0,
+        return [
+            [
+                radius * math.cos(math.radians(angle)),
+                radius * math.sin(math.radians(angle)),
+                0,
+            ]
+            for angle in angles
         ]
-        for angle in angles
-    ]
 
+    def common_coin(self, bottom=False):
+        # basic coin shape
+        coin = solid2.cylinder(d=self.coin_diameter, h=self.coin_thickness, _fn=self.fn)
 
-def common_coin(bottom=False):
-    # basic coin shape
-    coin = cylinder(d=coin_diameter, h=coin_thickness, _fn=fn)
+        # cut out the center
+        # 2mm deep, 2.5mm rim (5mm/2)
+        coin -= solid2.cylinder(h=2, d=self.coin_diameter - 5, _fn=self.fn).up(3)
 
-    # cut out the center
-    # 2mm deep, 2.5mm rim (5mm/2)
-    coin -= cylinder(h=2, d=coin_diameter - 5, _fn=fn).up(3)
+        if bottom:
+            # If bottom, create nut holder
+            # The nut holder consists of a circular support area and a
+            # hexagon shaped hole for the nut.
+            for location in self.hole_locations():
+                coin += solid2.cylinder(
+                    h=self.coin_thickness, d=self.screw_hole_diameter * 3, _fn=self.fn
+                ).translate(location)
+                coin -= (
+                    solid2.cylinder(h=2, d=self.nut_width, _fn=6)
+                    .translate(location)
+                    .up(3)
+                )  # fn=6 cleverly makes it a hexagon
 
-    if bottom:
-        # If bottom, create nut holder
-        # The nut holder consists of a circular support area and a
-        # hexagon shaped hole for the nut.
-        for location in hole_locations():
-            coin += cylinder(
-                h=coin_thickness, d=screw_hole_diameter * 3, _fn=fn
+        # create 4 screw holes
+        for location in self.hole_locations():
+            coin -= solid2.cylinder(
+                h=self.coin_thickness, d=self.screw_hole_diameter, _fn=self.fn
             ).translate(location)
-            coin -= (
-                cylinder(h=2, d=nut_width, _fn=6).translate(location).up(3)
-            )  # fn=6 cleverly makes it a hexagon
 
-    # create 4 screw holes
-    for location in hole_locations():
-        coin -= cylinder(h=coin_thickness, d=screw_hole_diameter, _fn=fn).translate(
-            location
-        )
-
-    return coin
+        return coin
 
 
 class ArchimedeanSpiralString:
@@ -105,7 +113,7 @@ class ArchimedeanSpiralString:
             letter_orientation = -270
         for i, theta in enumerate(degree_list):
             letters.append(
-                text(
+                solid2.text(
                     font="Liberation Mono:style=Bold",
                     halign="center",
                     size=self.letter_size,
