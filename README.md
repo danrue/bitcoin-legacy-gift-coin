@@ -5,9 +5,10 @@
 ![opened](./samples/opened.jpg)
 ![insides](./samples/insides.jpg)
 
-The Bitcoin Legacy Gift Coin is a custom designed two-piece coin engineered to
-securely and safely gift a Bitcoin cold wallet in a tangible form, reminiscent
-of gifting gold.
+The [Bitcoin Legacy Gift
+Coin](https://www.printables.com/model/444355-bitcoin-legacy-gift-coin) is a
+custom designed two-piece coin engineered to securely and safely gift a Bitcoin
+cold wallet in a tangible form, reminiscent of gifting gold.
 
 This repo contains the 3d models which consists of two coins that embed a
 bitcoin seed phrase.
